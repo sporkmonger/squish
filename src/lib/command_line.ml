@@ -1,7 +1,7 @@
 type command_t = Help | Create | Train | Classify;;
 
 let command = ref Help;;
-let bucket_file = ref "~/.squish_buckets";;
+let bucket_file = ref (UnixExtras.tilde_expand "~/.squish_buckets");;
 let bucket_name = ref None;;
 
 let spec_list = [
@@ -18,7 +18,7 @@ let spec_list = [
     "Classifies the input as one of the available buckets")
 ];;
 let usage = "squish <options> [bucketfile]";;
-let anon_fun = (fun file -> bucket_file := file);;
+let anon_fun = (fun file -> bucket_file := (UnixExtras.tilde_expand file));;
 
 Arg.parse spec_list anon_fun usage;;
 
