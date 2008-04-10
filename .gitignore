@@ -1,0 +1,5 @@
+*.cmo
+*.cmi
+*.cmx
+*.o
+squish
