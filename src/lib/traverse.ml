@@ -17,7 +17,7 @@ let find_cloneable_transition (state, state_list) =
     (* If there is a single transition that makes up the bulk of the incoming
      * transitions, but the other transitions combined produce at least
      * 40% of the total, then clone. *)
-    if (float_of_int !best_transition_count) >
+    if sum > 3 && (float_of_int !best_transition_count) >
         0.4 *. float_of_int (sum - !best_transition_count) then
       !best_transition
     else

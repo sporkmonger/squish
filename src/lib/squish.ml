@@ -1,6 +1,6 @@
 let input_bit = Bit_reader.create_bit_reader stdin;;
 
-let buckets bucket_file =
+let buckets bucket_file : (string, State.t * State.t list ref) Hashtbl.t =
   try begin
     let in_channel = open_in bucket_file in
     Marshal.from_channel in_channel
@@ -42,8 +42,8 @@ let train bucket_name bucket_file =
         Marshal.to_channel out_channel buckets [];
         Printf.printf "\nTrained input into '%s'.\n" bucket_name;
         Printf.printf
-          "Bucket now contains %d states."
-          (List.length state_list)
+          "Bucket now contains %d states.\n"
+          (List.length !state_list)
       end
     end
 
