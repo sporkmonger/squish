@@ -1,0 +1,2 @@
+# Include the subdirectories
+.SUBDIRS: lib main

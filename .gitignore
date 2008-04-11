@@ -1,6 +1,12 @@
 *.cmo
 *.cmi
 *.cmx
+*.cmxa
 *.o
+*.lock
+*.omc
+*.a
+*.opt
+.omakedb
 squish
 squish.tmproj
