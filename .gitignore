@@ -10,4 +10,5 @@
 *.out
 .omakedb
 squish
+squish_top
 squish.tmproj
