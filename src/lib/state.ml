@@ -5,16 +5,14 @@ type t = {
   mutable transition_one : t
 }
 
-let all_states = ref [];;
-
-let create () =
+let create state_list =
   let rec new_state = {
     count_zero = 0;
     count_one = 0;
     transition_zero = new_state;
     transition_one = new_state
   } in
-  all_states := new_state :: !all_states; new_state
+  state_list := new_state :: !state_list; new_state
 
 let rebind state bit transition_state =
   if bit = 0 then
@@ -22,8 +20,8 @@ let rebind state bit transition_state =
   else
     state.transition_one <- transition_state
 
-let clone_out transition_state clone_state =
-  let new_state = create () in
+let clone_out transition_state clone_state state_list =
+  let new_state = create state_list in
   let round x = int_of_float (x +. 0.5) in
   let new_count count =
     round ((float_of_int clone_state.count_zero) /. 2.0) in
@@ -53,7 +51,7 @@ let next state bit =
   if bit = 0 then state.transition_zero else state.transition_one
 
 (* Returns a list of all states which reference the specified state. *)
-let incoming state =
+let incoming (state, state_list) =
   let rec incoming accu remainder =
     match remainder with
       [] -> accu
@@ -62,7 +60,7 @@ let incoming state =
         incoming (head :: accu) tail
       else
         incoming accu tail
-  in incoming [] !all_states
+  in incoming [] !state_list
 
 (* Returns the number of times state one has transitioned to state two. *)
 let transition_count state_from state_to =

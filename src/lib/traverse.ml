@@ -1,5 +1,5 @@
-let find_cloneable_transition state =
-  let incoming = State.incoming state in
+let find_cloneable_transition (state, state_list) =
+  let incoming = State.incoming (state, state_list) in
   let transition_count state_from =
     State.transition_count state_from state in
   let sum = List.fold_left (+) 0 (List.map transition_count incoming) in
@@ -24,19 +24,19 @@ let find_cloneable_transition state =
       None
   end;;
 
-let rec traverse state input_bit =
+let rec traverse (state, state_list) input_bit =
   match (try Some (input_bit ()) with End_of_file -> None) with
     None -> ()
   | Some bit ->
     State.incr state bit;
     let next_state = (State.next state bit) in
     let transition_to_clone =
-      find_cloneable_transition next_state
+      find_cloneable_transition (next_state, state_list)
     in match transition_to_clone with
       None -> ()
     | Some origin_state ->
-      State.clone_out origin_state next_state;
-    traverse (State.next state bit) input_bit;;
+      State.clone_out origin_state next_state state_list;
+    traverse ((State.next state bit), state_list) input_bit;;
 
 let probability state input_bit =
   let rec probability accu state =
