@@ -1,16 +1,13 @@
 USE_OCAMLFIND = true
+BYTE_ENABLED = true
+NATIVE_ENABLED = true
+
 OCAMLPACKS[] = annexlib
 
 if $(not $(OCAMLFIND_EXISTS))
    eprintln(This project requires ocamlfind, but is was not found.)
    eprintln(You need to install ocamlfind and run "omake --configure".)
    exit 1
-
-# Do we want to use the bytecode compiler,
-# or the native-code one?  Let's use both for
-# this example.
-NATIVE_ENABLED = true
-BYTE_ENABLED = true
 
 # Include the src subdirectory
 .SUBDIRS: src
