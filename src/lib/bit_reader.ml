@@ -1,9 +1,9 @@
-let create_bit_reader in_channel =
+let create_bit_reader (stream : char Stream.t) =
   let buffer = ref 0 in
   let position = ref 0 in
   function () ->
     if !position = 0 then
-      buffer := input_byte in_channel;
+      buffer := int_of_char (Stream.next stream);
     incr position;
     if !position = 8 then
       position := 0;

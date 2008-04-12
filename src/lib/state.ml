@@ -1,3 +1,5 @@
+open Num
+
 type t = {
   mutable count_zero : int;
   mutable count_one : int;
@@ -20,35 +22,30 @@ let rebind state bit transition_state =
   else
     state.transition_one <- transition_state
 
-let clone_out transition_state clone_state state_list =
-  let new_state = create state_list in
-  let round x = int_of_float (x +. 0.5) in
-  let new_count count =
-    round ((float_of_int clone_state.count_zero) /. 2.0) in
-  clone_state.count_zero <- new_count clone_state.count_zero;
-  clone_state.count_one <- new_count clone_state.count_one;
-  (* This is lazy, but shouldn't have a major effect.  Off-by-one issues. *)
-  new_state.count_zero <- clone_state.count_zero;
-  new_state.count_one <- clone_state.count_one;
-  if transition_state.transition_zero == clone_state then
-    transition_state.transition_zero <- new_state
-  else if transition_state.transition_one == clone_state then
-    transition_state.transition_one <- new_state
-
 let incr state bit =
   if bit = 0 then
     state.count_zero <- state.count_zero + 1
   else
     state.count_one <- state.count_one + 1
 
-let probability state bit =
-  let total = state.count_zero + state.count_one in
-  let bit_count = if bit = 0 then state.count_zero else state.count_one in
-  if total = 0 then 0.0 else
-    (float_of_int bit_count) /. (float_of_int total)
+let set_count state bit new_count =
+  if bit = 0 then
+    state.count_zero <- new_count
+  else
+    state.count_one <- new_count
+
+let count state bit =
+  if bit = 0 then state.count_zero else state.count_one
 
 let next state bit =
   if bit = 0 then state.transition_zero else state.transition_one
+
+let probability state bit : num =
+  (* c = confidence, where high numbers mean low confidence *)
+  let c = 2 in
+  let total = state.count_zero + state.count_one in
+  if total = 0 then (num_of_int 0) else
+    (num_of_int ((count state bit) + c)) // (num_of_int (total + (2 * c)))
 
 (* Returns a list of all states which reference the specified state. *)
 let incoming (state, state_list) =

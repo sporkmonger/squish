@@ -10,6 +10,6 @@ OCAMLOPTFLAGS += -inline 10
 OCamlLibrary(libsquish, $(FILES))
 
 squish_top: $(CMO_FILES)
-	$(OCAMLFIND) $(OCAMLMKTOP) -linkpkg $(OCAML_LIBS) $(CMO_FILES) -o $@
+	$(OCAMLFIND) $(OCAMLMKTOP) -linkpkg nums.cma $(OCAML_LIBS) $(CMO_FILES) -o $@
 
 .DEFAULT: libsquish.a squish_top

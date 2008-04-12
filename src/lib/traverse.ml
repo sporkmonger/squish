@@ -1,49 +1,55 @@
-let find_cloneable_transition (state, state_list) =
-  let incoming = State.incoming (state, state_list) in
-  let transition_count state_from =
-    State.transition_count state_from state in
-  let sum = List.fold_left (+) 0 (List.map transition_count incoming) in
-  let best_transition = ref None in
-  let best_transition_count = ref 0 in
-  let inspect_transition cur_state =
-    let current_transition_count = transition_count cur_state in
-    if !best_transition == None ||
-        (transition_count cur_state) > !best_transition_count then begin
-      best_transition := Some cur_state;
-      best_transition_count := current_transition_count
-    end
-  in begin
-    List.iter inspect_transition incoming;
-    (* If there is a single transition that makes up the bulk of the incoming
-     * transitions, but the other transitions combined produce at least
-     * 40% of the total, then clone. *)
-    if sum > 3 && (float_of_int !best_transition_count) >
-        0.4 *. float_of_int (sum - !best_transition_count) then
-      !best_transition
-    else
-      None
-  end;;
+open Num
+
+let min_count_1 = 4;;
+let min_count_2 = 4;;
 
 let rec traverse (state, state_list) input_bit =
-  match (try Some (input_bit ()) with End_of_file -> None) with
+  match (try Some (input_bit ()) with Stream.Failure -> None) with
     None -> ()
   | Some bit ->
     State.incr state bit;
     let next_state = (State.next state bit) in
-    let transition_to_clone =
-      find_cloneable_transition (next_state, state_list)
-    in match transition_to_clone with
-      None -> ()
-    | Some origin_state ->
-      State.clone_out origin_state next_state state_list;
-    traverse ((State.next state bit), state_list) input_bit;;
+    let next_total =
+      (State.count next_state 0) + (State.count next_state 1) in
+    begin
+      if State.count state bit > min_count_1 && 
+          (next_total - (State.count state bit)) > min_count_2 then begin
+        let new_state = State.create state_list in
+        let ratio = (float_of_int (State.count state bit)) /.
+          (float_of_int next_total) in
+        begin
+          State.rebind state bit new_state;
+          for bit = 0 to 1 do
+            begin
+              State.rebind new_state bit (State.next next_state bit);
+              let new_count = int_of_float (ratio *.
+                (float_of_int (State.count next_state bit))) in
+              let next_count =
+                (State.count next_state bit) - new_count in
+              begin
+                State.set_count new_state bit new_count;
+                State.set_count next_state bit next_count;
+              end
+            end
+          done
+        end
+      end;
+      let next_state = (State.next state bit) in
+      traverse (next_state, state_list) input_bit
+    end
 
-let probability state input_bit =
-  let rec probability accu state =
-    match (try Some (input_bit ()) with End_of_file -> None) with
-      None -> accu
-    | Some bit -> 
-      (probability
-        (State.probability state bit *. accu)
-        (State.next state bit))
-  in probability 1.0 state;;
+let compress state input_bit : string =
+  ""
+
+let probability state input_bit : num =
+  let rec probability (accu : num) state : num =
+    begin
+      (* Printf.printf "accu p = %0.10000f\n%!" (float_of_num accu); *)
+      match (try Some (input_bit ()) with Stream.Failure -> None) with
+        None -> accu
+      | Some bit -> 
+        probability
+          ((State.probability state bit) */ accu)
+          (State.next state bit)
+    end
+    in probability (num_of_int 1) state;;
