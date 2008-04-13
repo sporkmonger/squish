@@ -1,6 +1,6 @@
 open Num
 
-let input_bit = Bit_reader.create_bit_reader (Stream.of_channel stdin);;
+let input_bit = Bit_stream.create_bit_reader (Stream.of_channel stdin);;
 
 let buckets bucket_file : (string, State.t * State.t list ref) Hashtbl.t =
   try begin
@@ -68,7 +68,7 @@ let classify bucket_file =
     begin
       Printf.printf "Processing %s...\n%!" bucket_name;
     let input_bit =
-      Bit_reader.create_bit_reader (Stream.of_string input_string) in
+      Bit_stream.create_bit_reader (Stream.of_string input_string) in
     let probability = Traverse.probability initial_state input_bit in begin
       sum_probability := !sum_probability +/ probability;
       if probability >/ !best_probability then begin

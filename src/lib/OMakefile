@@ -1,4 +1,4 @@
-FILES = bit_reader state traverse squish
+FILES = bit_stream state traverse squish
 CMO_FILES = $(addsuffix .cmo, $(FILES))
 
 # Let's do aggressive inlining on native code

@@ -1,7 +1,8 @@
 open Num
 
-let min_count_1 = 4;;
-let min_count_2 = 4;;
+(* We want to keep the number of states in the model under control. *)
+let min_count_1 = 8;;
+let min_count_2 = 8;;
 
 let rec traverse (state, state_list) input_bit =
   match (try Some (input_bit ()) with Stream.Failure -> None) with
