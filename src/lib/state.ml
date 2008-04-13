@@ -1,5 +1,3 @@
-open Num
-
 type t = {
   mutable count_zero : int;
   mutable count_one : int;
@@ -40,12 +38,17 @@ let count state bit =
 let next state bit =
   if bit = 0 then state.transition_zero else state.transition_one
 
-let probability state bit : num =
+let probability state bit : float =
   (* c = confidence, where high numbers mean low confidence *)
   let c = 2 in
   let total = state.count_zero + state.count_one in
-  if total = 0 then (num_of_int 0) else
-    (num_of_int ((count state bit) + c)) // (num_of_int (total + (2 * c)))
+  if total = 0 then 0.0 else
+    (float_of_int ((count state bit) + c)) /. (float_of_int (total + (2 * c)))
+
+let predict state : float =
+  let total = state.count_zero + state.count_one in
+  if total = 0 then 0.0 else
+    (float_of_int state.count_zero) /. (float_of_int total)
 
 (* Returns a list of all states which reference the specified state. *)
 let incoming (state, state_list) =

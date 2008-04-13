@@ -2,7 +2,7 @@ USE_OCAMLFIND = true
 BYTE_ENABLED = true
 NATIVE_ENABLED = true
 
-OCAMLPACKS[] = annexlib num
+OCAMLPACKS[] = annexlib extlib num
 
 if $(not $(OCAMLFIND_EXISTS))
    eprintln(This project requires ocamlfind, but is was not found.)

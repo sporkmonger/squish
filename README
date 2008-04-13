@@ -3,8 +3,8 @@ effectively implements most of the DMC compression algorithm.  In essence,
 it creates several different compression models, one for each classification
 "bucket".  To train an input into a bucket, you simply traverse the model,
 and increment the counter for each transition, cloning states as you would
-in DMC.  To classify an input, you calculate the probability of the input
-for each bucket by traversing the model and getting the product of all of
-the individual transition probabilities.
+in DMC.  To classify an input, you calculate the compression ratios of the
+input when compressed by the model of each bucket, selecting the best
+compression model as the classification.
 
 Squish is written in OCaml and is highly experimental.

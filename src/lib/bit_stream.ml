@@ -1,9 +1,14 @@
-let create_bit_reader (stream : char Stream.t) =
+let create_bit_reader (enum : char Enum.t) =
   let buffer = ref 0 in
   let position = ref 0 in
   function () ->
-    if !position = 0 then
-      buffer := int_of_char (Stream.next stream);
+    if !position = 0 then (
+      let character : char option = Enum.get enum in
+        match (character) with
+          None -> raise Enum.No_more_elements
+        | Some c ->
+          buffer := (int_of_char c)
+    );
     incr position;
     if !position = 8 then
       position := 0;
@@ -15,13 +20,12 @@ let create_bit_writer (output_buffer : Buffer.t) =
   let buffer = ref 0 in
   let position = ref 0 in
   function bit ->
-    if !position = 0 then begin
-      Buffer.add_char output_buffer (char_of_int !buffer);
-      buffer := 0
-    end;
+    if !position = 0 then
+      buffer := 0;
     incr position;
     if !position = 8 then
       position := 0;
-    buffer := !buffer lsr 1;
-    buffer := !buffer lor (bit * 128);;
-  
+    buffer := !buffer lsl 1;
+    buffer := !buffer lor bit;
+    if !position = 0 then
+      Buffer.add_char output_buffer (char_of_int !buffer);;
