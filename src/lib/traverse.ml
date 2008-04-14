@@ -39,6 +39,20 @@ let rec traverse (state, state_list) input_bit =
       traverse (next_state, state_list) input_bit
     end
 
+let magic_number state input_bit : float =
+  let rec magic_number (accu : float) state : float =
+    begin
+      (* Printf.printf "accu p = %0.10000f\n%!" (float_of_num accu); *)
+      match (try Some (input_bit ()) with Enum.No_more_elements -> None) with
+        None -> accu
+      | Some bit -> 
+        magic_number
+          ((log (State.probability state bit)) +. accu)
+          (State.next state bit)
+    end
+    in magic_number 0.0 state;;
+  
+
 let compress state input_bit : string =
   let max = ref 0x1000000 in
   let min = ref 0 in

@@ -67,6 +67,38 @@ let classify bucket_file =
   let input_enum = Std.input_chars stdin in
   let buckets = buckets bucket_file in
   let best_bucket = ref None in
+  let best_number = ref (0.0 -. 999999999999.0) in
+  let sum_numbers = ref 0.0 in
+  let calc_numbers bucket_name (initial_state, state_list) =
+    begin
+      Printf.printf "Processing %s...\n%!" bucket_name;
+      State.print_t initial_state;
+      Printf.printf "\n";
+    let input_bit =
+      Bit_stream.create_bit_reader (Enum.clone input_enum) in
+    let magic_number = Traverse.magic_number initial_state input_bit in
+    begin
+      sum_numbers := !sum_numbers +. magic_number;
+      if magic_number > !best_number then begin
+        best_bucket := Some bucket_name;
+        best_number := magic_number
+      end;
+      Printf.printf "bucket: %s, number=%f\n" bucket_name magic_number;
+    end
+  end
+  in begin
+    Hashtbl.iter calc_numbers buckets;
+    match !best_bucket with
+      None -> Printf.printf "No bucket matched.  Does a bucket exist?\n"
+    | Some bucket_name ->
+      Printf.printf "%s\n" bucket_name;
+      Printf.printf "number=%f\n" !best_number
+  end;;
+
+(* let classify bucket_file =
+  let input_enum = Std.input_chars stdin in
+  let buckets = buckets bucket_file in
+  let best_bucket = ref None in
   let best_ratio = ref 9999.0 in
   let sum_ratios = ref 0.0 in
   let calc_ratios bucket_name (initial_state, state_list) =
@@ -99,7 +131,7 @@ let classify bucket_file =
     | Some bucket_name ->
       Printf.printf "%s\n" bucket_name;
       Printf.printf "ratio=%f\n" !best_ratio
-  end;;
+  end;; *)
 
 (* let classify bucket_file =
   let read_all in_channel =
