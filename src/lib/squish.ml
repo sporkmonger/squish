@@ -71,9 +71,9 @@ let classify bucket_file =
   let sum_numbers = ref 0.0 in
   let calc_numbers bucket_name (initial_state, state_list) =
     begin
-      Printf.printf "Processing %s...\n%!" bucket_name;
+      (* Printf.printf "Processing %s...\n%!" bucket_name;
       State.print_t initial_state;
-      Printf.printf "\n";
+      Printf.printf "\n"; *)
     let input_bit =
       Bit_stream.create_bit_reader (Enum.clone input_enum) in
     let magic_number = Traverse.magic_number initial_state input_bit in
@@ -83,7 +83,7 @@ let classify bucket_file =
         best_bucket := Some bucket_name;
         best_number := magic_number
       end;
-      Printf.printf "bucket: %s, number=%f\n" bucket_name magic_number;
+      (* Printf.printf "bucket: %s, number=%f\n" bucket_name magic_number; *)
     end
   end
   in begin
@@ -92,7 +92,7 @@ let classify bucket_file =
       None -> Printf.printf "No bucket matched.  Does a bucket exist?\n"
     | Some bucket_name ->
       Printf.printf "%s\n" bucket_name;
-      Printf.printf "number=%f\n" !best_number
+      (* Printf.printf "number=%f\n" !best_number *)
   end;;
 
 (* let classify bucket_file =
