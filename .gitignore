@@ -9,6 +9,8 @@
 *.opt
 *.out
 .omakedb
+.DS_Store
+corpus
 squish
 squish_top
 squish.tmproj
