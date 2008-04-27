@@ -51,7 +51,6 @@ let traverse (state, state_list) input_bit =
 let magic_number state input_bit : float =
   let rec magic_number (accu : float) state : float =
     begin
-      (* Printf.printf "accu p = %0.10000f\n%!" (float_of_num accu); *)
       match (try Some (input_bit ()) with Enum.No_more_elements -> None) with
         None -> accu
       | Some bit -> 
