@@ -1,10 +1,12 @@
 Squish is a classifier based on probabilistic finite state models.  It
-effectively implements most of the DMC compression algorithm.  In essence,
+effectively implements much of the DMC compression algorithm.  In essence,
 it creates several different compression models, one for each classification
 "bucket".  To train an input into a bucket, you simply traverse the model,
 and increment the counter for each transition, cloning states as you would
-in DMC.  To classify an input, you calculate the compression ratios of the
-input when compressed by the model of each bucket, selecting the best
-compression model as the classification.
+in DMC.  To classify an input, you take the sum of the logs of the
+probabilities of each input bit as the finite state model is traversed.
+Whichever bucket produces the highest numerical result is selected as the
+classification for that input.  This is effectively equivalent to multiplying
+out all of the probabilities, but can be done much more efficiently.
 
-Squish is written in OCaml and is highly experimental.
+Squish is written in OCaml and is still experimental.
